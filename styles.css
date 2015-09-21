@@ -1,0 +1,9 @@
+.row{
+	margin: 50px 0;
+}
+
+.card{
+	height: 150px;
+	border: 2px solid #000;
+	border-radius: 10px;
+}
