@@ -24,17 +24,37 @@ $(function(){
 			
 			return !(count==5);
 		},
-		validatePairs: function(suits, number){
+		compareSuit: function(a, b){
+
+			if(a.suit < b.suit){
+				return -1;
+			}else if(a.suit > b.suit){
+				return 1;
+			}else{
+				return 0;
+			}
+		},
+		compareNum: function(a, b){
+
+			if(a.suit == b.suit){
+				return a.number - b.number;
+			}else{
+				return 0;
+			}
 		},
 		determineHand: function(suits, numbers){
 			var handArr = [];
 
 			for(var i=0; i<5; i++){
-				handArr.push(suits[i]+numbers[i]);
+				var card = {};
+				card["suit"] = suits[i]; 
+				card["number"] = numbers[i];
+				handArr.push(card);
 			}
 
-			var hand = handArr.join(",");
-			console.log(hand);
+			var sorted = handArr.sort(handlers.compareSuit).sort(handlers.compareNum);
+
+			console.log(sorted);
 		},
 
 	};
@@ -90,7 +110,7 @@ $(function(){
 
 	for(var s=0; s<suits.length; s++){
 		var suit;
-		switch(n){
+		switch(s){
 			case 0:
 				suit = "S";
 				break;
