@@ -1,7 +1,3 @@
-#main{
-	height: 100vh;
-}
-
 .row{
 	margin: 50px 0;
 }
@@ -11,4 +7,12 @@
 	border: 2px solid #000;
 	border-radius: 10px;
 	margin: 10px 0;
+	padding: 5px;
 }
+
+.card select{
+	margin-top: 10px;
+	height: 40%;
+	font-size: 14px;
+}
+

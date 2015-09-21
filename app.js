@@ -70,11 +70,11 @@ $(function(){
 	});
 
 	var cardSuit = $("<select>",{
-		"class": "col-sm-6 suit-select"
+		"class": "col-xs-12 suit-select"
 	});
 
 	var cardNumber = $("<select>",{
-		"class": "col-sm-6 number-select"
+		"class": "col-xs-12 number-select"
 	});
 
 	var compareBtn = $("<button>",{
@@ -128,8 +128,8 @@ $(function(){
 		option.appendTo(cardSuit);
 	}
 
-	cardSuit.appendTo(cardContainer);
-	cardNumber.appendTo(cardContainer);
+	cardSuit.appendTo(card);
+	cardNumber.appendTo(card);
 	card.appendTo(cardContainer);
 	compareBtn.appendTo(main);
 
