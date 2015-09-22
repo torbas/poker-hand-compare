@@ -9,20 +9,29 @@ $(function(){
 			return arr;
 		},
 		//purpose of this is to make sure a hand doesn't have 5 duplicates
-		validateHand: function(suits, numbers){
+		validateHand: function(hand){
 			var count = 0;
-			var current = "";
+			var current = {};
+			current["suit"] = "";
+			current["num"] = 0;
 
 			for(var i=0; i<5; i++){
-				var card = suits[i] + numbers[i];
-				if(card != current){
-					current = card;
+				//only occurs if a card with the same suit appears twice or more
+				if(count > 1){
+					break;
+				}
+				var card = {};
+				card["suit"] = hand[i].suit;
+				card["num"] = hand[i].num;
+				if(card.suit != current.suit || card.num != current.num){
+					current.suit = card.suit;
+					current.num = card.num;
 					count = 0;
 				}
 				count++;
 			}
 			
-			return !(count==5);
+			return !(count>1);
 		},
 		compareSuit: function(a, b){
 
@@ -42,19 +51,55 @@ $(function(){
 				return 0;
 			}
 		},
-		determineHand: function(suits, numbers){
+		determineDuplicates: function(hand){
+			//sort by numbers
+			var numSorted = hand.sort(function(a,b){ return a.num - b.num});
+			var count = 0;
+			var duplicates = [];
+			var current = {};
+			current["suit"] = "";
+			current["num"] = 0;
+
+			for(var i=0; i<5; i++){
+				var card = {};
+				card["suit"] = hand[i].suit;
+				card["num"] = hand[i].num;
+				if(card.num != current.num){
+					count++;
+					duplicates[count-1] = [];
+					current.suit = card.suit;
+					current.num = card.num;
+				}
+				duplicates[count-1].push(card);
+			}
+
+			var type = "";
+			var pairsCount = 0;
+			var threesCount = 0;
+			for(var d=0; d<duplicates.length; d++){
+				if(duplicates[d].length <= 1){
+					continue;
+				}
+			}
+			
+			return;
+
+		},
+		sortHand: function(suits, numbers){
 			var handArr = [];
 
 			for(var i=0; i<5; i++){
 				var card = {};
 				card["suit"] = suits[i]; 
-				card["number"] = numbers[i];
+				card["num"] = numbers[i];
 				handArr.push(card);
 			}
 
-			var sorted = handArr.sort(handlers.compareSuit).sort(handlers.compareNum);
+			return handArr.sort(handlers.compareSuit).sort(handlers.compareNum);
 
-			console.log(sorted);
+		},
+		determineHand: function(hand){
+			handlers.determineDuplicates(hand);
 		},
 
 	};
@@ -155,15 +200,20 @@ $(function(){
 		var player1Nums = handlers.pushArray(player1.find(".number-select option:selected"));
 		var player2Nums = handlers.pushArray(player2.find(".number-select option:selected"));
 
-		var player1Valid = handlers.validateHand(player1Suits, player1Nums);
-		var player2Valid = handlers.validateHand(player2Suits, player2Nums);
+		var player1Hand = handlers.sortHand(player1Suits, player1Nums);
+		var player2Hand = handlers.sortHand(player2Suits, player2Nums);
+
+		var player1Valid = handlers.validateHand(player1Hand);
+		var player2Valid = handlers.validateHand(player2Hand);
 
 		if(!player1Valid||!player2Valid){
-			messageDiv.addClass("alert alert-danger").text("One of the hands has five duplicates");
+			messageDiv.addClass("alert alert-danger").text("One of the hands has too many duplicates");
 			return;
+		}else{
+			messageDiv.removeClass("alert alert-danger").text("");
 		}
 
-		handlers.determineHand(player1Suits, player1Nums);
+		handlers.determineHand(player1Hand);
 		
 	});
 
