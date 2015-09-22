@@ -128,12 +128,12 @@ $(function(){
 			for(var s=0; s<hand.length-1; s++){
 				var current = hand[s].suit;
 				var next = hand[s+1].suit;
-				if(current==next){
+				if(current == next){
 					count++;
 				}
 			}
 
-			if(count==4){
+			if(count == 4){
 				type = "flush";
 			}
 
@@ -149,7 +149,6 @@ $(function(){
 			for(var s=0; s<hand.length-1; s++){
 				var current = parseInt(numSorted[s].num)+1;
 				var next = parseInt(numSorted[s+1].num);
-				console.log(current, next);
 				if(current==next){
 					count++;
 				}
@@ -171,8 +170,37 @@ $(function(){
 			var duplicateRes = handlers.determineDuplicates(hand);
 			var straightRes = handlers.determineStraight(hand);
 			var flushRes = handlers.determineFlush(hand);
-			console.log("dup",duplicateRes,"straight", straightRes, "flush", flushRes);
+			
+			if(duplicateRes != ""){
+				return duplicateRes;
+			}else{
+				if(straightRes != "" && flushRes != ""){
+					return straightRes +" "+ flushRes;
+				}
+
+				if(straightRes != "" && flushRes == ""){
+					return straightRes;
+				}
+
+				if(straightRes == "" && flushRes != ""){
+					return flushRes;
+				}
+
+				return false;
+			}
 		},
+		player1Win: function(player1, player2){
+			player1.css("background-color", "#99FF33");
+			player2.css("background-color", "#FFA3A3");
+		},
+		player2Win: function(player1, player2){
+			player2.css("background-color", "#99FF33");
+			player1.css("background-color", "#FFA3A3");
+		},
+		bothWin: function(player1, player2){
+			player1.css("background-color", "#99FF33");
+			player2.css("background-color", "#99FF33");
+		}
 
 	};
 
@@ -251,13 +279,26 @@ $(function(){
 	compareBtn.appendTo(main);
 
 	main.children(".hand").each(function(){
-		for(var i = 0; i < 5; i++){
+		for(var i=0; i<5; i++){
 			var tmpContainer = cardContainer.clone().appendTo($(this));
-			if(i==0){
+			if(i == 0){
 				tmpContainer.addClass("col-sm-offset-1");
 			}
 		}
 	});
+
+	var ranks = {};
+	ranks["one pair"] = 1;
+	ranks["two pair"] = 2;
+	ranks["three of a kind"] = 3;
+	ranks["straight"] = 4;
+	ranks["royal straight"] = 4;
+	ranks["flush"] = 5;
+	ranks["full house"] = 6;
+	ranks["four of a kind"] = 7;
+	ranks["straight flush"] = 8;
+	ranks["royal straight flush"] = 9;
+
 
 	$("#main").on("click", "#compare-btn", function(){
 
@@ -285,7 +326,48 @@ $(function(){
 			messageDiv.removeClass("alert alert-danger").text("");
 		}
 
-		handlers.determineHand(player1Hand);
+		var player1Res = handlers.determineHand(player1Hand);
+		var player2Res = handlers.determineHand(player2Hand);
+
+		if(player1Res && player2Res){
+			//compare if player 1 or player 2 wins
+			if(ranks[player1Res] > ranks[player2Res]){
+				handlers.player1Win(player1, player2);
+				return;
+			}
+
+			if(ranks[player1Res] < ranks[player2Res]){
+				handlers.player2Win(player1, player2);
+				return;
+			}
+
+			if(ranks[player1Res] == ranks[player2Res]){
+				handlers.bothWin(player1, player2);
+				return;
+			}
+
+		}
+
+		if(!player1Res && !player2Res){
+			//compare high card
+			return;
+			
+		}
+
+		if(!player2Res){
+			//player 1 wins
+			handlers.player1Win(player1, player2);
+			return;
+		}
+
+		if(!player1Res){
+			//player 2 wins
+			handlers.player2Win(player1, player2);
+			return;
+		}
+
+		player1.children("h2").append(" "+player1Res.toUpperCase());
+		player2.children("h2").append(" "+player2Res.toUpperCase());
 		
 	});
 
