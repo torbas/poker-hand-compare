@@ -90,7 +90,6 @@ $(function(){
 			var pairsCount = 0;
 			var threesCount = 0;
 			for(var d=0; d<duplicates.length; d++){
-				console.log(duplicates[d], duplicates[d].length);
 				if(duplicates[d].length <= 1){
 					continue;
 				}else if(duplicates[d].length == 4){
@@ -122,8 +121,37 @@ $(function(){
 			return type;
 
 		},
+		determineStraight: function(hand, flush){
+			var numSorted = hand.sort(function(a,b){ return a.num - b.num});
+			var type = "";
+			var highest = 0;
+			var count = 0;
+
+			for(var s=0; s<hand.length-1; s++){
+				var current = numSorted[s].num+1;
+				var next = numSorted[s+1].num;
+				if(current==next){
+					count++;
+				}
+				highest = next;
+			}
+
+			//since its sorted then royal straight if highest = 14
+			if(highest == 14 && flush && count == 5){
+				type = "royal straight flush";
+			}else if(highest != 14 && flush && count == 5){
+				type = "straight flush"
+			}else if(!flush && count == 5){
+				type = "straight"
+			}
+
+			return type
+
+
+		},
 		determineHand: function(hand){
 			var duplicateRes = handlers.determineDuplicates(hand);
+			var straightRes = handlers.determineStraight(hand);
 			console.log(duplicateRes);
 		},
 
