@@ -126,14 +126,14 @@ $(function(){
 			var type = "";
 
 			for(var s=0; s<hand.length-1; s++){
-				var current = numSorted[s].suit;
-				var next = numSorted[s+1].suit;
+				var current = hand[s].suit;
+				var next = hand[s+1].suit;
 				if(current==next){
 					count++;
 				}
 			}
 
-			if(count==5){
+			if(count==4){
 				type = "flush";
 			}
 
@@ -147,8 +147,9 @@ $(function(){
 			var count = 0;
 
 			for(var s=0; s<hand.length-1; s++){
-				var current = numSorted[s].num+1;
-				var next = numSorted[s+1].num;
+				var current = parseInt(numSorted[s].num)+1;
+				var next = parseInt(numSorted[s+1].num);
+				console.log(current, next);
 				if(current==next){
 					count++;
 				}
@@ -156,9 +157,9 @@ $(function(){
 			}
 
 			//since its sorted then royal straight if highest = 14
-			if(highest == 14 && count == 5){
+			if(highest == 14 && count == 4){
 				type = "royal straight";
-			}else if(highest != 14 && count == 5){
+			}else if(highest != 14 && count == 4){
 				type = "straight"
 			}
 
@@ -170,7 +171,7 @@ $(function(){
 			var duplicateRes = handlers.determineDuplicates(hand);
 			var straightRes = handlers.determineStraight(hand);
 			var flushRes = handlers.determineFlush(hand);
-			console.log(duplicateRes, straightRes, flushRes);
+			console.log("dup",duplicateRes,"straight", straightRes, "flush", flushRes);
 		},
 
 	};
