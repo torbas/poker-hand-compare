@@ -51,6 +51,19 @@ $(function(){
 				return 0;
 			}
 		},
+		sortHand: function(suits, numbers){
+			var handArr = [];
+
+			for(var i=0; i<5; i++){
+				var card = {};
+				card["suit"] = suits[i]; 
+				card["num"] = numbers[i];
+				handArr.push(card);
+			}
+
+			return handArr.sort(handlers.compareSuit).sort(handlers.compareNum);
+
+		},
 		determineDuplicates: function(hand){
 			//sort by numbers
 			var numSorted = hand.sort(function(a,b){ return a.num - b.num});
@@ -77,29 +90,41 @@ $(function(){
 			var pairsCount = 0;
 			var threesCount = 0;
 			for(var d=0; d<duplicates.length; d++){
+				console.log(duplicates[d], duplicates[d].length);
 				if(duplicates[d].length <= 1){
 					continue;
+				}else if(duplicates[d].length == 4){
+					type = "four of a kind";
+					break;
+				}else if(duplicates[d].length == 2){
+					pairsCount++;
+				}else if(duplicates[d].length == 3){
+					threesCount++;
 				}
 			}
-			
-			return;
 
-		},
-		sortHand: function(suits, numbers){
-			var handArr = [];
-
-			for(var i=0; i<5; i++){
-				var card = {};
-				card["suit"] = suits[i]; 
-				card["num"] = numbers[i];
-				handArr.push(card);
+			if(threesCount == 1 && pairsCount == 1){
+				type = "full house";
 			}
 
-			return handArr.sort(handlers.compareSuit).sort(handlers.compareNum);
+			if(threesCount == 0 && pairsCount == 1){
+				type = "one pair"
+			}
+
+			if(threesCount == 0 && pairsCount == 2){
+				type = "two pair"
+			}
+
+			if(threesCount == 1 && pairsCount == 0){
+				type = "three of a kind"
+			}
+			
+			return type;
 
 		},
 		determineHand: function(hand){
-			handlers.determineDuplicates(hand);
+			var duplicateRes = handlers.determineDuplicates(hand);
+			console.log(duplicateRes);
 		},
 
 	};
