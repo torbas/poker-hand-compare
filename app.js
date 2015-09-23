@@ -329,27 +329,79 @@ $(function(){
 		var player1Res = handlers.determineHand(player1Hand);
 		var player2Res = handlers.determineHand(player2Hand);
 
+		var player1Msg = player1Res;
+		var player2Msg = player2Res;
+
+		if(!player1Msg){
+			player1Msg = "high card";
+		}
+
+		if(!player2Msg){
+			player2Msg = "high card";
+		}
+
+		player1.children("h2").append(" "+player1Msg.toUpperCase());
+		player2.children("h2").append(" "+player2Msg.toUpperCase());
+
 		if(player1Res && player2Res){
 			//compare if player 1 or player 2 wins
 			if(ranks[player1Res] > ranks[player2Res]){
 				handlers.player1Win(player1, player2);
-				return;
 			}
 
 			if(ranks[player1Res] < ranks[player2Res]){
 				handlers.player2Win(player1, player2);
-				return;
 			}
 
 			if(ranks[player1Res] == ranks[player2Res]){
 				handlers.bothWin(player1, player2);
-				return;
 			}
+
+			return;
 
 		}
 
+		console.log(player1Res, player2Res);
+
 		if(!player1Res && !player2Res){
 			//compare high card
+			var player1Highest = player1Hand.sort(function(a,b){ return b.num - a.num})[0];
+			var player2Highest = player2Hand.sort(function(a,b){ return b.num - a.num})[0];
+
+			var suitRanks = {};
+			suitRanks["D"] = 1;
+			suitRanks["C"] = 2;
+			suitRanks["H"] = 3;
+			suitRanks["S"] = 4;
+
+			var player1Suit = suitRanks[player1Highest.suit];
+			var player2Suit = suitRanks[player2Highest.suit];
+
+			if(player1Highest.num > player2Highest.num){
+				handlers.player1Win(player1, player2);
+			}
+
+			if(player1Highest.num < player2Highest.num){
+				handlers.player2Win(player1, player2);
+			}
+
+			if(player1Highest.num == player2Highest.num){
+				if(player1Suit > player2Suit){
+					handlers.player1Win(player1, player2);
+				}
+
+				if(player1Suit < player2Suit){
+					handlers.player2Win(player1, player2);
+				}
+
+				if(player1Suit == player2Suit){
+					handlers.bothWin(player1, player2);
+				}
+			}
+
+			player1Res = "high card";
+			player2Res = "high card";
+
 			return;
 			
 		}
@@ -357,17 +409,16 @@ $(function(){
 		if(!player2Res){
 			//player 1 wins
 			handlers.player1Win(player1, player2);
+			player2Res = "high card";
 			return;
 		}
 
 		if(!player1Res){
 			//player 2 wins
 			handlers.player2Win(player1, player2);
+			player1Res = "high card";
 			return;
 		}
-
-		player1.children("h2").append(" "+player1Res.toUpperCase());
-		player2.children("h2").append(" "+player2Res.toUpperCase());
 		
 	});
 
